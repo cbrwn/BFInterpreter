@@ -6,10 +6,10 @@ namespace BFInterpret {
     class Interpreter {
 
         // Amount of memory needed, I try to aim for as small as possible
-        const int MEM_SIZE = 16;
+        const int MEM_SIZE = 512;
 
         byte[] memory;
-        int pointer = 0;
+        int pointer = 0, highestUsedMemory = 0;
         string output = "";
 
         public Interpreter(string script) {
@@ -17,7 +17,7 @@ namespace BFInterpret {
             doActions(script);
             // Spitting out memory information
             Console.WriteLine("Dump:");
-            for(int i = 0; i < MEM_SIZE; i++) {
+            for(int i = 0; i <= highestUsedMemory; i++) {
                 string num = memory[i] < 10 ? "00" + memory[i].ToString() : memory[i] < 100 ? "0" + memory[i].ToString() : memory[i].ToString();
                 Console.Write("{0} ", num);
             }
@@ -57,6 +57,7 @@ namespace BFInterpret {
                 pointer++;
                 if(pointer >= MEM_SIZE)
                     pointer = 0;
+                highestUsedMemory = Math.Max(highestUsedMemory, pointer);
                 break;
             case '+':
                 if(memory[pointer] == 255)
